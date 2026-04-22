@@ -22,12 +22,6 @@ class AuthProvider(str, enum.Enum):
     LOCAL = "local"  # Email/Password
     GOOGLE = "google"  # Google OAuth
 
-# User (patient) ────────< Scan
-#    my_scans            patient
-#
-# User (doctor) ────────< Scan
-#    reviewed_scans      doctor
-
 class User(Base):
     __tablename__ = "users"
 
@@ -46,7 +40,6 @@ class User(Base):
     # Relationships
     my_scans = relationship("Scan", foreign_keys="[Scan.patient_id]", back_populates="patient")
     reviewed_scans = relationship("Scan", foreign_keys="[Scan.doctor_id]", back_populates="doctor")
-
 
 class Scan(Base):
     __tablename__ = "scans"

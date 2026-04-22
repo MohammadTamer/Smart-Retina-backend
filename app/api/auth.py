@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 import requests
 load_dotenv()
 
-router = APIRouter(tags=["Authentication"])
+router = APIRouter()
 
 @router.get("/me", response_model=user_schemas.UserResponse)
 def read_users_me(current_user: models.User = Depends(deps.get_current_user)):
@@ -43,7 +43,6 @@ def create_user(user: user_schemas.UserCreate, db: Session = Depends(database.ge
 
 @router.post("/login", response_model=user_schemas.Token)
 def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
-
     user = db.query(models.User).filter(models.User.email == form_data.username).first()
 
     if not user or not security.verify_password(form_data.password, user.hashed_password):
@@ -85,11 +84,8 @@ def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), 
 
 
 @router.post("/google", response_model=user_schemas.Token)
-def google_login(
-        login_data: user_schemas.GoogleLoginRequest,
-        response: Response,
-        db: Session = Depends(database.get_db)
-):
+def google_login(login_data: user_schemas.GoogleLoginRequest, response: Response,
+                 db: Session = Depends(database.get_db)):
     try:
         google_res = requests.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -158,11 +154,6 @@ def google_login(
     }
 
 
-
-
-
-
-
 @router.post("/logout")
 def logout(response: Response, refresh_token: str = Cookie(None), db: Session = Depends(database.get_db)):
     if not refresh_token:
@@ -181,11 +172,7 @@ def logout(response: Response, refresh_token: str = Cookie(None), db: Session = 
 
 
 @router.post("/refresh", response_model=user_schemas.Token)
-def refresh_token(
-        response: Response,
-        refresh_token: str = Cookie(None),
-        db: Session = Depends(database.get_db)
-):
+def refresh_token(response: Response, refresh_token: str = Cookie(None), db: Session = Depends(database.get_db)):
     if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -217,7 +204,6 @@ def refresh_token(
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-
     stored_token.revoked = True
 
     new_access_token = security.create_access_token(
@@ -244,7 +230,6 @@ def refresh_token(
         samesite="lax",
         max_age=security.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
-
 
     return {
         "access_token": new_access_token,

@@ -30,6 +30,7 @@ class GoogleLoginRequest(BaseModel):
 class UserResponse(UserBase):
     id: int
     is_active: bool
+    role: UserRole
     avatar_url: Optional[str] = None
 
     class Config:

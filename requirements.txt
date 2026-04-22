@@ -1,10 +1,19 @@
+# Backend
 fastapi
 uvicorn
 sqlalchemy
-pydantic
+pydantic[email]
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 alembic
 requests
 pymysql
+python-dotenv
+google-auth
+
+# AI
+torch
+torchvision
+pillow
+cloudinary
